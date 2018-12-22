@@ -6,9 +6,9 @@ import json
 
 class random_forest:
     def __init__(self,max_trees=6,max_deep=6,cate='val'):
-        self.max_trees=max_trees
-        self.max_deep=max_deep
-        self.cate=cate
+        self.max_trees=max_trees   #最多多少树
+        self.max_deep=max_deep    #树的最大深度
+        self.cate=cate   #决策树的类型
         self.trees_dic={}
         for i in range(self.max_trees):
             self.trees_dic[i]=DessionTree(max_deep=max_deep,cate=cate)
@@ -27,7 +27,7 @@ class random_forest:
             out_Y.append(Y[i])
         return np.array(out_X),np.array(out_Y)
 
-    def fit(self,X,Y):
+    def fit(self,X,Y):      #训练的过程
         for i in range(self.max_trees):
             print('training NO.'+str(i)+' tree')
             X_tmp,Y_tmp=self.dis_the_data(X,Y,int(len(X)/self.max_trees))

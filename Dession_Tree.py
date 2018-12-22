@@ -7,18 +7,19 @@ import math
 class DessionTree:
 
     def __init__(self,data_cate='con',cate='val',max_deep=6):
-        self.max_deep=max_deep
+        self.max_deep=max_deep#树的最大深度
         self.data_cate=data_cate
-        self.cate=cate
-        self.tree = Tree(0)
+        self.cate=cate#决策树的类型是回归树还是分类树
+        self.tree = Tree(0)#这棵树
         self.Dic=0
 
     def fit(self,X,Y):
         if self.data_cate=='con' and self.cate!='val':
             Y=self.dis_the_con(Y)
-        self.Split(self.tree,X,Y)
+        self.Split(self.tree,X,Y)       # 训练用函数，训练决策树
 
-    def dis_the_con(self,Y):
+
+    def dis_the_con(self,Y):     # 连续变量离散化
         max_ = np.max(Y)
         min_ = np.min(Y)
         step = (max_ - min_) / 200
@@ -43,7 +44,7 @@ class DessionTree:
 
         return Y
 
-    def Split(self,tree,X,Y):
+    def Split(self,tree,X,Y):       # 决策树的训练过程
         if tree.deep<=self.max_deep and np.var(Y)!=0 and X!=[]:
             self.feature_len = len(X[0])
             best_idx = 0
@@ -61,7 +62,7 @@ class DessionTree:
                 # print(split_point)
                 for p in split_point:
                     try:
-                        now_s ,x1,y1,x2,y2= self.cont(X, Y, i, p)
+                        now_s ,x1,y1,x2,y2= self.cont(X, Y, i, p)    #
                     except:
                         now_s=best_s
                     if best_s > now_s:
@@ -124,7 +125,7 @@ class DessionTree:
         total=sum([dic[i] for i in dic])
         return -sum([(dic[i]/total)*math.log(dic[i]/total) for i in dic])
 
-    def sort(self,x):
+    def sort(self,x):  # 快速排序
         if len(x)>1:
             flag=x[rd.randint(0,len(x)-1)]
             i=0
@@ -144,7 +145,7 @@ class DessionTree:
             x[i:]=self.sort(x[i:])
         return x
 
-    def predict(self,X):
+    def predict(self,X):   # 预测
         try:
             X=np.reshape(X,(-1,len(X[0])))
         except:
@@ -154,14 +155,14 @@ class DessionTree:
             out.append(self.tree.get(i))
         return np.array(out)
 
-    def save_model(self,modelname):
+    def save_model(self,modelname):  #保存模型
         with open(modelname,'w',encoding='utf-8') as fo:
             model={
                 'tree':self.tree.get_dic(),
             }
             json.dump(model, fo, ensure_ascii=False)
 
-    def load_model(self,modelname):
+    def load_model(self,modelname):   #载入模型
         with open(modelname,'r',encoding='utf-8') as fo:
             model=json.load(fo)
             self.tree=Tree(dic=model['tree'])
@@ -173,11 +174,11 @@ class DessionTree:
 class Tree:
     def __init__(self,deep=0,dic=0):
         if dic==0:
-            self.deep=deep
-            self.idx=0
-            self.point=0
-            self.value=0
-            self.end=False
+            self.deep=deep # 当前分支的最大深度
+            self.idx=0    # 该分支选择的第几个属性
+            self.point=0    # 该属性的值
+            self.value=0   # 当前分支的值（长期为0）一个值
+            self.end=False    # 是否为叶子节点
             self.value_x=[]
             self.value_y=[]
         else:
